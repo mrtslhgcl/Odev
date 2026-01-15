@@ -195,7 +195,6 @@ class DataRepository:
         df["review_date"] = pd.to_datetime(df["review_date"], errors="coerce")
         for col in ["verified_purchase"]:
             if col in df.columns:
-                # Ensure 0/1 numeric
                 df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).clip(0, 1)
 
         df = df.dropna(subset=["review_id"])
@@ -438,7 +437,6 @@ class LegendPage(QWidget):
         self.table.setModel(self.model)
 
     def set_legend(self, legend_df: pd.DataFrame):
-        # Try to auto-detect description column
         cols = list(legend_df.columns)
         var_col = cols[0]
         desc_col = cols[-1]
@@ -480,13 +478,11 @@ class MainWindow(QMainWindow):
         self.filters = Filters()
         self.is_dark = False
 
-        # Layout scaffold
         root = QWidget()
         root_layout = QHBoxLayout(root)
         root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.setSpacing(0)
 
-        # Sidebar
         self.sidebar = QFrame()
         self.sidebar.setObjectName("sidebar")
         self.sidebar.setFixedWidth(240)
@@ -516,13 +512,11 @@ class MainWindow(QMainWindow):
         sb.addWidget(self.btn_open)
         sb.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
-        # Content area
         content = QWidget()
         content_layout = QVBoxLayout(content)
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
 
-        # Top bar
         self.topbar = QFrame()
         self.topbar.setObjectName("topbar")
         tb = QHBoxLayout(self.topbar)
@@ -570,10 +564,9 @@ class MainWindow(QMainWindow):
         self.page_overview.filters_ui["apply_btn"].clicked.connect(self.apply_filters)
         self.page_overview.filters_ui["export_btn"].clicked.connect(self.export_view)
 
-        # Theme default
+
         self.apply_theme()
 
-        # Load default file if provided
         if default_path and os.path.exists(default_path):
             self.load_dataset(default_path)
 
@@ -707,7 +700,6 @@ class MainWindow(QMainWindow):
         self.page_overview.kpis["avg_helpful"].set_value(f"{avg_helpful:.2f}")
 
     def _style_axes(self, ax):
-        # Minimal styling for readability in both themes
         if self.is_dark:
             ax.set_facecolor("#111827")
             ax.figure.set_facecolor("#111827")
@@ -728,7 +720,6 @@ class MainWindow(QMainWindow):
                 spine.set_color("#cbd5e1")
 
     def _update_charts(self, df: pd.DataFrame):
-        # 1) Trend: monthly counts
         c = self.page_overview.charts["trend"]
         ax = c.ax
         ax.clear()
@@ -744,8 +735,7 @@ class MainWindow(QMainWindow):
         ax.tick_params(axis="x", rotation=30)
         self._style_axes(ax)
         c.draw()
-
-        # 2) Sentiment distribution
+        
         c = self.page_overview.charts["sentiment"]
         ax = c.ax
         ax.clear()
@@ -757,8 +747,6 @@ class MainWindow(QMainWindow):
         ax.set_ylabel("Reviews")
         self._style_axes(ax)
         c.draw()
-
-        # 3) Brands by count (top 10)
         c = self.page_overview.charts["brands"]
         ax = c.ax
         ax.clear()
@@ -769,8 +757,6 @@ class MainWindow(QMainWindow):
         ax.set_xlabel("Reviews")
         self._style_axes(ax)
         c.draw()
-
-        # 4) Aspect ratings (avg)
         c = self.page_overview.charts["aspects"]
         ax = c.ax
         ax.clear()
@@ -793,7 +779,6 @@ class MainWindow(QMainWindow):
         c.draw()
 
     def export_view(self):
-        # Export current overview page area as a PNG (easy 'show off' feature)
         if self.pages.currentWidget() is not self.page_overview:
             self._set_page(0)
 
@@ -812,7 +797,6 @@ class MainWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
 
-    # Try default file next to exe/script
     default_path = os.path.join(BASE_PATH, "CW1_data.xlsx")
     win = MainWindow(default_path=default_path if os.path.exists(default_path) else None)
     win.show()
