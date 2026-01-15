@@ -35,10 +35,8 @@ from matplotlib.figure import Figure
 def get_base_path():
     """Get the base path for resources - works for both script and frozen exe"""
     if getattr(sys, 'frozen', False):
-        # Running as compiled exe
         return os.path.dirname(sys.executable)
     else:
-        # Running as script
         return os.path.dirname(os.path.abspath(__file__))
 
 BASE_PATH = get_base_path()
@@ -298,8 +296,6 @@ class OverviewPage(QWidget):
         root = QVBoxLayout(self)
         root.setContentsMargins(16, 16, 16, 16)
         root.setSpacing(12)
-
-        # Filter bar
         filter_frame = QFrame()
         filter_frame.setObjectName("card")
         fb = QHBoxLayout(filter_frame)
@@ -368,7 +364,6 @@ class OverviewPage(QWidget):
 
         root.addLayout(kpi_grid)
 
-        # Charts area (scrollable)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
@@ -534,7 +529,6 @@ class MainWindow(QMainWindow):
         tb.addWidget(self.btn_refresh)
         tb.addWidget(self.btn_theme)
 
-        # Pages
         self.pages = QStackedWidget()
         self.page_overview = OverviewPage()
         self.page_data = DataTablePage()
@@ -552,7 +546,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(root)
 
-        # Wiring
         self.btn_overview.clicked.connect(lambda: self._set_page(0))
         self.btn_data.clicked.connect(lambda: self._set_page(1))
         self.btn_legend.clicked.connect(lambda: self._set_page(2))
@@ -644,7 +637,6 @@ class MainWindow(QMainWindow):
         fill(country_cb, sorted(df["country"].dropna().unique().tolist()))
         fill(sentiment_cb, sorted(df["sentiment"].dropna().unique().tolist()))
 
-        # Date range
         dmin = df["review_date"].min()
         dmax = df["review_date"].max()
         if pd.notna(dmin) and pd.notna(dmax):
